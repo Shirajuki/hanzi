@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Jonny</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+	</head>
+	<script src="hanzi.js"></script>
+	<body>
+		<div id="divLoading" style="visibility:hidden;">
+		   <br /><br /><br /><br />
+		   <br /><br /><br />
+		   <img id="lod" src="aab.gif" alt="Loading..." /><br />
+		</div>
+		<div class="all">
+		<!--		MAIN -->
+		<main class="article">
+			 <div id="displayBox">
+		      <h3 id="display"></h3>
+		      <h3 id="display2"></h3>
+			</div>
+
+		    <div id="box">
+		      <div id="characterBox"></div>
+					<p id="showChar"></p>
+				</div>
+				<div id="buttons">
+		      <button id='animate'>✏️</button>
+		      <button id='reset'>❌</button>
+		      <button id='run'>SKIP</button>
+		      <button id='help'>🔎</button> <br />
+		    </div>
+
+		    <div id="hitbox">
+		     <p id="correct" style="visibility:hidden;">✔️</p>
+		    </div>
+			<div id="settings">
+				<br>
+				<hr/>
+				<div id="settings2">
+				  <button id='setLevel1' class="st">Level 1</button>
+				  <button id='setLevel2' class="st">Level 2</button>
+					<button id='setLevel1' class="st">Level 3</button>
+					<button id='setLevel1' class="st">Level 4</button>
+					<button id='setLevel1' class="st">Level 5</button>
+					<button id='setLevel1' class="st">Level 6</button>
+					<button id='setLevel1' class="st">Level 7</button>
+					<button id='setLevel1' class="st">Level 8</button>
+					<button id='setLevel1' class="st">Level 9</button>
+					<button id='setLevel1' class="st">Level 10</button>
+				</div>
+			</div>
+			<!--		FOOTER -->
+		</main>
+	</div>
+
+<script>
+let character = [];
+let pinyin = [];
+let translation = [];
+
+let lvl = 1;
+let i = 0;
+
+let HSK11c = ['我','我们','你','你们','他','她','他们','她们','这','那','哪','谁','什么','多少','几','怎么','怎么样',0];
+let HSK11p = ['wǒ','wǒ men','nǐ','nǐ men','tā','tā','tā men','tā men','zhè','nà','nǎ','shéi','shén me','duō shǎo','jǐ','zěn me','zěn me yàng'];
+let HSK11t = ['I','we','you','you guys','he','she','they(men)','they(women)','this(here)','that(there)','where','who','what/why','how many/how much','a few/how many','how','how about'];
+
+let HSK12c = ['一','二','三','四','五','六','七','八','九','十','零',0];
+let HSK12p = ['yī','èr','sān','sì','wǔ','liù','qī','bā','jiǔ','shí','líng'];
+let HSK12t = ['1','2','3','4','5','6','7','8','9','10','0'];
+
+  window.onload = loading
+  function loading() {
+  	document.getElementById('animate').onclick = function() {
+  		writer.animateCharacter();
+  	}
+    document.getElementById('run').onclick = function() {
+  		level();
+  	}
+    document.getElementById('help').onclick = function() {
+  		writer.showOutline()
+  	}
+  	document.getElementById('reset').onclick = function() {
+      writer.hideOutline()
+  		writer.quiz({
+  			onComplete: function() {
+  				level();
+          correct();
+  			}
+  		});
+  	}
+  	document.getElementById('setLevel1').onclick = function() {
+  		lvl = 1
+  		done()
+			loading2()
+			i = 0;
+	}
+	document.getElementById('setLevel2').onclick = function() {
+  		lvl = 2
+  		done()
+			loading2()
+			i = 0;
+	}
+	level();
+  setInterval(function() {
+    if (check == 1) {
+      document.getElementById('showChar').innerHTML = character[i].charAt(y-2);
+    }
+  }, 100);
+}
+function loading2() {
+	setTimeout(function() {
+    document.getElementById('divLoading').style.visibility = 'visible';
+		document.getElementById('lod').src = 'aab.gif'
+  }, 1);
+  setTimeout(function() {
+    document.getElementById('divLoading').style.visibility = 'hidden';
+	}, 1500);
+}
+function correct() {
+  console.log("correct!")
+  setTimeout(function() {
+    document.getElementById('correct').style.visibility = 'visible';
+    document.getElementById('characterBox').style.background = 'pink';
+    document.getElementById('showChar').style.background = 'pink';
+  }, 80);
+  setTimeout(function() {
+    document.getElementById('correct').style.visibility = 'hidden';
+    document.getElementById('characterBox').style.background = 'white';
+    document.getElementById('showChar').style.background = 'white';
+	}, 900);
+}
+let writerWidth = 340;
+let writerHeight = 340;
+var writer = new HanziWriter('characterBox', '爱', {
+  width: writerWidth,
+  height: writerHeight,
+  showCharacter: false,
+  showOutline: false,
+  padding: 20,
+  highlightOnComplete: false,
+  strokeAnimationSpeed: 2,
+  delayBetweenStrokes: 10, // milliseconds
+  radicalColor: '#337ab7' // blue
+});
+writer.quiz({
+  onComplete: function() {
+    level();
+    correct();
+  }
+});
+let check = 0;
+function level() {
+	if (lvl == 1) {
+		character = HSK11c;
+		pinyin = HSK11p;
+		translation = HSK11t;
+	}
+	if (lvl == 2) {
+		character = HSK12c;
+		pinyin = HSK12p;
+		translation = HSK12t;
+	}
+	if (character[i] == 0) {
+		done();
+	}else{
+		if (character[i].length !== 1) {
+			if (check == 0) {
+			  document.getElementById('showChar').innerHTML = character[i].charAt(y-1);
+			}if (check == 1) {
+			  document.getElementById('showChar').innerHTML = character[i].charAt(y-2) + character[i].charAt(y-1) ;
+			}if (check == 2) {
+			  document.getElementById('showChar').innerHTML = character[i].charAt(y-3) + character[i].charAt(y-2) + character[i].charAt(y-1) ;
+			}
+		  }else {
+			document.getElementById('showChar').innerHTML = character[i].charAt(y-1);
+		  }
+		run();
+	}
+}
+let y = 0;
+function done() {
+	i = 0;
+	loading2()
+	level();
+	i = 0;
+}
+function run() {
+	if (character[i].length == y){
+		i++
+		y = 1;
+    check = 0;
+	}else{
+		y++
+    check++
+	}
+	if (character[i] == 0) {
+		done();
+	}
+	else {
+		setTimeout(function() {
+		writer.setCharacter(character[i].charAt(y-1));
+		document.getElementById('display').innerHTML = i+1 + ". " + pinyin[i];
+		document.getElementById('display2').innerHTML = translation[i];
+		document.getElementById('showChar').innerHTML = '';
+	    writer.hideCharacter();
+	    writer.quiz({
+			onComplete: function() {
+				level();
+	      correct();
+			}
+		  });
+		}, 1500);
+	}
+}
+</script>
+	</body>
+</html>
